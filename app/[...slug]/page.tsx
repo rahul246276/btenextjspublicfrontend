@@ -18,8 +18,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const path = `/${slug.join("/")}`;
   const faq = Object.values(faqPageConfigs).find((entry) => entry.path === path);
-  const newsDetail = path.startsWith("/news/");
-  const page = staticSeo[path] || (faq ? { title: `${faq.title} | Bablons Travel`, description: faq.description } : newsDetail ? { title: "Travel News | Bablons Travel", description: "Read the latest travel news and updates from Bablons Travel." } : { title: "Travel Gallery | Bablons Travel", description: "Explore travel photos and destinations with Bablons Travel." });
+  const newsDetail = path.startsWith("/news/") || path.startsWith("/travel-news/");
+  const page = staticSeo[path] || (faq ? { title: `${faq.title} | Bablons Travel`, description: faq.description } : newsDetail ? { title: "Travel News | Bablons Travel", description: "Read the latest travel news and updates from Bablons Travel." } : path.startsWith("/gallery/") ? { title: "Travel Gallery | Bablons Travel", description: "Explore travel photos and destinations with Bablons Travel." } : null);
+  if (!page) return {};
   const canonicalPath = path === "/contact" ? "/contact-us" : path.startsWith("/news/") ? path.replace("/news/", "/travel-news/") : path;
   const canonical = `${SITE_URL}${canonicalPath}`;
   return {
